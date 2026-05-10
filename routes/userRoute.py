@@ -1,0 +1,96 @@
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session
+)
+
+from controllers.user_controller import (
+    create_user_controller,
+    login_user_controller,
+    get_user_controller,
+    delete_user_controller,
+    reset_password_controller
+)
+
+user_bp = Blueprint('user', __name__)
+
+
+# HOME
+@user_bp.route('/')
+def index():
+    return render_template('index.html')
+
+
+# CADASTRO
+@user_bp.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+
+    if request.method == 'GET':
+        return render_template('cadastro.html')
+
+    user, error = create_user_controller(request.form)
+
+    if error:
+        return error, 400
+
+    return redirect(url_for('user.login_user'))
+
+
+# LOGIN
+@user_bp.route('/login', methods=['GET', 'POST'])
+def login_user():
+
+    if request.method == 'GET':
+        return render_template('login.html')
+
+    user, error = login_user_controller(request.form)
+
+    if error:
+        return error, 401
+
+    session['username'] = user.username
+
+    return redirect(url_for('user.usuario', username=user.username))
+
+
+# PERFIL
+@user_bp.route('/<username>')
+def usuario(username):
+
+    if 'username' not in session:
+        return redirect(url_for('user.login_user'))
+
+    user, error = get_user_controller(username)
+
+    if error:
+        return error, 404
+
+    return render_template('usuario.html', user=user)
+
+
+# LOGOUT
+@user_bp.route('/logout', methods=['POST'])
+def logout_user():
+
+    session.clear()
+
+    return redirect(url_for('user.index'))
+
+
+# REDEFINIR SENHA
+@user_bp.route('/redefinir-senha', methods=['POST'])
+def redefine_password():
+
+    return reset_password_controller()
+
+
+# DELETAR USUÁRIO
+@user_bp.route('/deletar', methods=['POST'])
+def delete_user():
+
+    result, status = delete_user_controller(session.get('username'))
+
+    return result, status

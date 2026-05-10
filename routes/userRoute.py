@@ -4,7 +4,7 @@ from flask import (
     request,
     redirect,
     url_for,
-    session
+    session, flash
 )
 
 from controllers.user_controller import (
@@ -27,16 +27,17 @@ def index():
 # CADASTRO
 @user_bp.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
+    if request.method == "POST":
+        user, error = create_user_controller(request.form)
 
-    if request.method == 'GET':
-        return render_template('cadastro.html')
+        if error == "USERNAME_EXISTS":
+            flash("Usuário já existe!", "error")
+            return render_template("login.html")
 
-    user, error = create_user_controller(request.form)
+        flash("Usuário criado com sucesso!", "success")
+        return render_template("login.html")
 
-    if error:
-        return error, 400
-
-    return redirect(url_for('user.login_user'))
+    return render_template("cadastro.html")
 
 
 # LOGIN
@@ -49,7 +50,8 @@ def login_user():
     user, error = login_user_controller(request.form)
 
     if error:
-        return error, 401
+        flash(error, "error")
+        return render_template('login.html')
 
     session['username'] = user.username
 

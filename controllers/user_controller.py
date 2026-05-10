@@ -38,9 +38,8 @@ def login_user_controller(form):
 
     if user and check_password_hash(user.password, password):
         return user, None
-
+    
     return None, "Credenciais inválidas!"
-
 
 # PERFIL
 def get_user_controller(username):
@@ -55,12 +54,13 @@ def get_user_controller(username):
 
 # DELETE (opcional futuro)
 def delete_user_controller(username):
-
+    
     user = User.query.filter_by(username=username).first()
 
     if not user:
         return "Usuário não encontrado!", 404
 
+    
     db.session.delete(user)
     db.session.commit()
 

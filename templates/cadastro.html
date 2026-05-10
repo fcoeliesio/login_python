@@ -10,86 +10,168 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: Arial, sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
       }
 
       body {
-        background: #0f172a;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        background: radial-gradient(circle at top, #1e293b, #020617);
         color: #e2e8f0;
         padding: 20px;
       }
 
       .container {
-        background: #1e293b;
-        padding: 40px;
-        border-radius: 12px;
         width: 100%;
         max-width: 450px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        padding: 42px 36px;
+        border-radius: 18px;
+        background: rgba(30, 41, 59, 0.75);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* brilho decorativo */
+      .container::before {
+        content: "";
+        position: absolute;
+        top: -60%;
+        left: -60%;
+        width: 220%;
+        height: 220%;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.12),
+          transparent 60%
+        );
+        transform: rotate(25deg);
+        pointer-events: none;
+      }
+
+      .container > * {
+        position: relative;
       }
 
       h1 {
         text-align: center;
-        margin-bottom: 25px;
-        font-size: 26px;
+        margin-bottom: 24px;
+        font-size: 28px;
+        font-weight: 700;
       }
 
       label {
-        font-size: 14px;
-        color: #cbd5e1;
+        font-size: 13px;
+        color: #94a3b8;
+        display: block;
+        margin-bottom: 6px;
       }
 
       input {
         width: 100%;
-        padding: 12px;
-        margin: 8px 0 16px 0;
-        border: none;
-        border-radius: 8px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(15, 23, 42, 0.6);
+        color: #e2e8f0;
         outline: none;
+        transition: 0.2s;
       }
 
       input:focus {
-        outline: 2px solid #3b82f6;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
       }
 
       button {
         width: 100%;
         padding: 12px;
-        background: #22c55e;
-        color: white;
+        border-radius: 10px;
         border: none;
-        border-radius: 8px;
         cursor: pointer;
-        font-weight: bold;
-        transition: 0.3s;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        transition: 0.25s ease;
+        margin-top: 6px;
       }
 
       button:hover {
-        background: #16a34a;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
       }
 
       .links {
-        margin-top: 20px;
+        margin-top: 22px;
         text-align: center;
-        font-size: 14px;
+        font-size: 13px;
+        color: #94a3b8;
       }
 
       .links a {
         color: #60a5fa;
         text-decoration: none;
+        font-weight: 500;
       }
 
       .links a:hover {
         text-decoration: underline;
       }
 
+      /* FLASH MESSAGES */
+      .msg {
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        text-align: center;
+        font-weight: 500;
+        animation: fadeIn 0.25s ease;
+      }
+
+      .msg.error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid #ef4444;
+        color: #fecaca;
+      }
+
+      .msg.success {
+        background: rgba(34, 197, 94, 0.15);
+        border: 1px solid #22c55e;
+        color: #bbf7d0;
+      }
+
+      .msg.warning {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid #f59e0b;
+        color: #fde68a;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       @media (max-width: 500px) {
         .container {
-          padding: 25px;
+          padding: 28px;
         }
       }
     </style>
@@ -97,7 +179,13 @@
 
   <body>
     <div class="container">
-      <h1>Cadastro</h1>
+      <h1>Criar Conta</h1>
+
+      <!-- FLASH MESSAGES -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="msg {{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
 
       <form action="/cadastro" method="post">
         <label for="nome">Nome completo</label>
@@ -118,7 +206,7 @@
       <div class="links">
         <p>
           Já tem conta?
-          <a href="{{ url_for('user.login_user') }}"> Fazer login </a>
+          <a href="{{ url_for('user.login_user') }}">Fazer login</a>
         </p>
       </div>
     </div>

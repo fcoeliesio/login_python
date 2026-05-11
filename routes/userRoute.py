@@ -1,28 +1,12 @@
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    session, flash
-)
-
-from controllers.user_controller import (
-    create_user_controller,
-    login_user_controller,
-    get_user_controller,
-    delete_user_controller,
-    reset_password_controller
-)
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from controllers.user_controller import *
 
 user_bp = Blueprint('user', __name__)
-
 
 # HOME
 @user_bp.route('/')
 def index():
     return render_template('index.html')
-
 
 # CADASTRO
 @user_bp.route('/cadastro', methods=['GET', 'POST'])

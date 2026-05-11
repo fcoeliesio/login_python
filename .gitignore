@@ -24,6 +24,6 @@ TestResults.xml
 #User-specific files
 .env
 venv/
-instance
-controllers/__pycache__
-__pycache__
+instance/
+**/__pycache__/
+*.pyc
